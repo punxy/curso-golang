@@ -9,6 +9,8 @@ import (
 func main() {
 	inicio := time.Now()
 
+	channels := make(chan string)
+
 	servidores := []string{
 		"https://oregoom.com/",
 		"https://www.udemy.com/",
@@ -18,23 +20,31 @@ func main() {
 	}
 
 	for _, srv := range servidores {
+		// revisarServidor(srv) // SIN CONCURRENCIA
+		// Para indicar que se ejecute en multiples hilos se agrega la palabra reservada GO
+		go revisarServidor(srv, channels)
+	}
 
-		// SIN CONCURRENCIA
-		revisarServidor(srv)
+	for i := 0; i < len(servidores); i++ {
+		fmt.Println(<-channels)
 	}
 
 	tiempoEjecucion := time.Since(inicio)
 
-	fmt.Println("Tiempo ejecución: ", tiempoEjecucion)
+	fmt.Println("Tiempo ejecución: ", tiempoEjecucion.Seconds())
 }
 
-func revisarServidor(servidor string) {
+func revisarServidor(servidor string, channel chan string) {
 	_, err := http.Get(servidor)
 
-	if err == nil {
-		fmt.Printf("%s\t: No está disponible el servidor\n", servidor)
+	if err != nil {
+		// fmt.Printf("%s\t: No está disponible el servidor\n", servidor)
+		channel <- servidor + " : No está disponible"
+
 	} else {
-		fmt.Printf("%s\t: Está funcionando\n", servidor)
+		// fmt.Printf("%s\t: Está funcionando\n", servidor)
+		channel <- servidor + " : Sí está disponible"
+
 	}
 
 }
