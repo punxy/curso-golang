@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"paquetes/models"
+
+	"github.com/donvito/hellomod"
+	"github.com/punxy/figuras"
 )
 
 func main() {
@@ -27,4 +30,11 @@ func main() {
 	fmt.Println("Nombre: ", user2.GetName())
 	fmt.Println("Edad: ", user2.GetEdad())
 
+	// Módulos de terceros
+
+	hellomod.SayHello()
+
+	// desde módulo github.com/punxy/figuras
+	c1 := figuras.Circulo{Radio: 10}
+	figuras.CalcularMedidas(&c1)
 }
